@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/mohammed/public_html/mwss
+    - /bin/cp -a * $DEPLOYPATH
