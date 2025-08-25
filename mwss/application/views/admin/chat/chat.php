@@ -1,6 +1,13 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+
+    <!-- CHAT AUDIO ELEMENT HERE -->
+    <audio id="chatNotifySound" preload="auto">
+        <source src="<?php echo site_url('uploads/sound/notify.mp3'); ?>" type="audio/mpeg">
+    </audio>
+    <!-- END AUDIO ELEMENT -->
+     
     <section class="content-header">
         <h1>
             <i class="fa fa-map-o"></i> <?php //echo $this->lang->line('chat') ?>
@@ -89,6 +96,15 @@
     var timestamp = '<?php echo time(); ?>';
     var branch_base_url = '<?php echo $branch_base_url; ?>';
     var date_time_temp = "";
+    // START SOUND FUNCTION HERE
+    function playNotificationSound() {
+        const audio = document.getElementById('chatNotifySound');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.log("Audio play blocked:", err));
+        }
+    }
+    // END SOUND FUNCTION
     function updateTime() {
         date_time_temp = js_yyyy_mm_dd_hh_mm_ss(Date(timestamp));
         timestamp++;
@@ -293,7 +309,9 @@ $(document).on('input','.chat_input',function(){
                     $('.contact.active .preview').html('<span><?php echo $this->lang->line('you'); ?>: </span>' + message);
                     $('.messages').animate({
                         scrollTop: $('.messages')[0].scrollHeight}, "slow");
-
+                    // START PLAY SOUND
+                    playNotificationSound();
+                    // END PLAY SOUND
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
 
@@ -310,6 +328,7 @@ $(document).on('input','.chat_input',function(){
         var chat_connection_id = $("input[name='chat_connection_id']").val();
         var chat_to_user = $("input[name='chat_to_user']").val();
         var last_chat_id = $("input[name='last_chat_id']").val();
+        var current_message_count = $('.messages ul li').length; // RELATED TO SOUND
         $.ajax({
             type: "POST",
             url: base_url + 'admin/chat/chatUpdate',
@@ -325,6 +344,14 @@ $(document).on('input','.chat_input',function(){
                 }
                 $("input[name='last_chat_id']").val(data.user_last_chat.id);
                 $('.messages ul').append(data.page);
+
+                // START OF SOUND
+                var new_message_count = $('.messages ul li').length;
+                if (new_message_count > current_message_count) {
+                    playNotificationSound();
+                }
+                // END POF SOUND
+                
                 if (end_reach) {
                     $('.messages').animate({
                         scrollTop: $('.messages')[0].scrollHeight}, "slow");
