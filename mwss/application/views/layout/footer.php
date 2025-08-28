@@ -94,6 +94,60 @@ if ($language_name != 'en') {
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/buttons.colVis.min.js" ></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/dataTables.responsive.min.js" ></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/ss.custom.js" ></script>
+<!-- 🔔 Chat Notification Sound -->
+<audio id="globalChatNotify" preload="auto">
+    <source src="<?php echo base_url('uploads/sound/notify.mp3'); ?>" type="audio/mpeg">
+</audio>
+
+<script>
+    var lastNotificationCount = 0;
+
+    // Play the chat ping
+    function playGlobalChatSound() {
+        const audio = document.getElementById('globalChatNotify');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(err => {
+                // silent catch in case autoplay is blocked
+                console.log("Chat sound blocked by browser:", err);
+            });
+        }
+    }
+
+    // Poll server for global chat notifications
+    function checkGlobalChatNotifications() {
+        $.ajax({
+            type: "POST",
+            url: base_url + 'admin/chat/mychatnotification', // <- you already have this controller method
+            data: {},
+            dataType: "JSON",
+            success: function (data) {
+                if (data.notifications && data.notifications.length > 0) {
+                    var total = 0;
+                    $.each(data.notifications, function (i, value) {
+                        total += parseInt(value.no_of_notification);
+                    });
+
+                    // If unseen count increases -> play sound
+                    if (total > lastNotificationCount) {
+                        playGlobalChatSound();
+
+                        // Update badge if exists
+                        $("#menu_chat_badge").text(total).show();
+                    }
+                    lastNotificationCount = total;
+                } else {
+                    // no notifications
+                    lastNotificationCount = 0;
+                    $("#menu_chat_badge").hide();
+                }
+            }
+        });
+    }
+
+    // Run every 15 seconds, anywhere in the application
+    setInterval(checkGlobalChatNotifications, 15000);
+</script>
 
 </body>
 </html>
