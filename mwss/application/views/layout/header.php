@@ -278,7 +278,7 @@ $tasklist = $this->customlib->getincompleteTask($userdata["id"],$userdata["role_
 if ($this->module_lib->hasActive('chat')) {
     if ($this->rbac->hasPrivilege('chat', 'can_view')) {
         ?>
-                                         <li class="cal15 d-sm-none"><a data-placement="bottom" data-toggle="tooltip" title="" href="<?php echo base_url() ?>admin/chat" data-original-title="<?php echo $this->lang->line('chat') ?>" class="todoicon"><i class="fa fa-comment-o"></i></a></li>
+                                         <li class="cal15 d-sm-none"><a data-placement="bottom" data-toggle="tooltip" title="" href="<?php echo base_url() ?>admin/chat" data-original-title="<?php echo $this->lang->line('chat') ?>" class="todoicon"><i class="fa fa-comment-o"></i><span id="menu_chat_badge" class="badge badge-success" style="display:none; position:relative; top:-10px; left:-5px;background-color:#28a745; color:#fff;">0</span></a></li>
                                         <?php
 }
     ?>
