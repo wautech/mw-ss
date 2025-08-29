@@ -388,23 +388,4 @@ class Cron extends MY_Controller
         }
     }
 
-    /**
-     * Auto mark teacher attendance - can be called via cron job
-     * Usage: curl http://yoursite.com/cron/auto_mark_attendance
-     */
-    public function auto_mark_attendance() {
-        $this->load->helper('auto_attendance');
-        
-        try {
-            $marked_count = mark_teacher_attendance_from_login($this);
-            $updated_count = update_attendance_with_login_time($this);
-            
-            echo "Auto attendance completed: {$marked_count} marked, {$updated_count} updated\n";
-            log_message('info', "Cron auto attendance: {$marked_count} marked, {$updated_count} updated");
-        } catch (Exception $e) {
-            echo "Error: " . $e->getMessage() . "\n";
-            log_message('error', "Cron auto attendance error: " . $e->getMessage());
-        }
-    }
-    
 }
