@@ -176,26 +176,4 @@ class Staffattendance extends Admin_Controller
         $this->load->view("layout/footer");
     }
 
-    /**
-     * Sync attendance from login records
-     */
-    public function sync_from_logins() {
-        $this->load->helper('auto_attendance');
-        
-        try {
-            $marked_count = mark_teacher_attendance_from_login($this);
-            $updated_count = update_attendance_with_login_time($this);
-            
-            echo json_encode([
-                'success' => true,
-                'marked_count' => $marked_count,
-                'updated_count' => $updated_count
-            ]);
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
 }

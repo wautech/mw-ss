@@ -6,28 +6,6 @@
     </section>
     <!-- Main content -->
     <section class="content">
-        <!-- Auto Attendance Status Card -->
-        <div class="col-md-12">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <h3 class="box-title">
-                        <i class="fa fa-clock-o"></i> Auto Attendance Status
-                    </h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-success btn-sm" onclick="runAutoAttendance()">
-                            <i class="fa fa-refresh"></i> Run Auto Attendance
-                        </button>
-                    </div>
-                </div>
-                <div class="box-body">
-                    <div id="auto-attendance-status" class="alert alert-info">
-                        <i class="fa fa-info-circle"></i> 
-                        Auto attendance marking is ready. Click "Run Auto Attendance" to process today's teacher logins.
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row"> 
 
             <div class="col-md-12">
@@ -176,74 +154,3 @@
         });
     }(jQuery))
 </script>
-
-<!-- //========staff auto attendance===== -->
-<script>
-// Run auto attendance marking
-function runAutoAttendance() {
-    $('#auto-attendance-status').html('<i class="fa fa-spinner fa-spin"></i> Processing auto attendance...');
-    
-    $.ajax({
-        url: '<?php echo base_url("admin/userlog/run_auto_attendance"); ?>',
-        type: 'POST',
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                $('#auto-attendance-status').html(
-                    '<i class="fa fa-check-circle text-success"></i> ' + 
-                    'Successfully marked attendance for ' + response.marked_count + ' teachers. ' +
-                    'Updated ' + response.updated_count + ' existing records.'
-                );
-                
-                // Refresh the page to show updated status
-                setTimeout(function() {
-                    location.reload();
-                }, 2000);
-            } else {
-                $('#auto-attendance-status').html(
-                    '<i class="fa fa-exclamation-triangle text-danger"></i> ' + 
-                    'Error: ' + response.message
-                );
-            }
-        },
-        error: function() {
-            $('#auto-attendance-status').html(
-                '<i class="fa fa-exclamation-triangle text-danger"></i> ' + 
-                'An error occurred while processing auto attendance.'
-            );
-        }
-    });
-}
-
-// Mark individual attendance
-function markIndividualAttendance(userId, loginDatetime) {
-    if (confirm('Mark attendance for this teacher based on login time?')) {
-        $.ajax({
-            url: '<?php echo base_url("admin/userlog/mark_individual_attendance"); ?>',
-            type: 'POST',
-            data: {
-                user_id: userId,
-                login_datetime: loginDatetime
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    alert('Attendance marked successfully!');
-                    location.reload();
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function() {
-                alert('An error occurred while marking attendance.');
-            }
-        });
-    }
-}
-</script>
-
-<style>
-.teacher-row {
-    background-color: #f0f8f0 !important;
-}
-</style>
