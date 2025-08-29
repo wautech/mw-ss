@@ -187,9 +187,6 @@
                         <div class="box-header with-border">
                             <h3 class="box-title"><i class="fa fa-users"></i> <?php echo $this->lang->line('staff_list'); ?></h3>
                             <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-success btn-sm" onclick="syncAttendanceFromLogins()">
-                                    <i class="fa fa-sync"></i> Sync from Logins
-                                </button>
                             </div>
                         </div>
                         <div class="box-body">
@@ -574,29 +571,4 @@ let disable_enable=(type,staff_id)=>{
     }
 }
 
-</script>
-
-<!-- Staff auto attendance -->
-<script>
-// Sync attendance from login records
-function syncAttendanceFromLogins() {
-    if (confirm('This will automatically mark attendance for all teachers who logged in today. Continue?')) {
-        $.ajax({
-            url: '<?php echo base_url("admin/staffattendance/sync_from_logins"); ?>',
-            type: 'POST',
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    alert('Successfully synced ' + response.marked_count + ' attendance records from login data.');
-                    location.reload();
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function() {
-                alert('An error occurred while syncing attendance.');
-            }
-        });
-    }
-}
 </script>
