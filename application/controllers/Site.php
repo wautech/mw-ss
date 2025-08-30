@@ -156,27 +156,6 @@ class Site extends Public_Controller
 
                     $this->session->set_userdata('admin', $session_data);
 
-                    // === Add attendance marking here ===
-                    $roles_array = explode(',', $result->roles);
-                    if (in_array('teacher', $roles_array)) {
-                        $this->load->model('staffattendance_model');
-                        $today = date('Y-m-d');
-                        $staff_id = $result->id;
-
-                        // Check if attendance already marked today
-                        $attendance = $this->staffattendance_model->get_by_staff_and_date($staff_id, $today);
-                        if (!$attendance) {
-                            $attendance_data = array(
-                                'staff_id' => $staff_id,
-                                'date'     => $today,
-                                'in_time'  => date('H:i:s'),
-                                'status'   => 'Present',
-                            );
-                            $this->staffattendance_model->insert($attendance_data);
-                        }
-                    }
-                    // === End attendance marking ===
-
                     $role      = $this->customlib->getStaffRole();
                     $role_name = json_decode($role)->name;
                     $this->customlib->setUserLog($this->input->post('username'), $role_name);
